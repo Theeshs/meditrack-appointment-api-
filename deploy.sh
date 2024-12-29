@@ -8,7 +8,7 @@ echo "enabled minicube docker env"
 eval $(minikube docker-env)
 
 echo "building new docker image"
-docker build -t appointment-service-api .
+docker build -t appointment-service-api:latest .
 
 echo "appliyng deployment yml"
 kubectl apply -f deployment.yaml
