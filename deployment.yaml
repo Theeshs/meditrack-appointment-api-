@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment-api
+  labels:
+    app: appointment-service-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: appointment-service-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: appointment-service-api
+    spec:
+      containers:
+        - name: appointment-service-api-container
+          image: appointment-service-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3002
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3002
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3002
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appointment-service-api-service
+  labels:
+    app: appointment-service-api
+spec:
+  selector:
+    app: appointment-service-api
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: appointment-service-api-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: appointment-service-api.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: appointment-service-api-service
+                port:
+                  number: 3002
