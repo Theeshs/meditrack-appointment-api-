@@ -50,7 +50,7 @@ spec:
     app: appointment-service-api
   ports:
     - protocol: TCP
-      port: 3002
+      port: 80
       targetPort: 3002
   type: ClusterIP
 
@@ -61,6 +61,7 @@ metadata:
   name: appointment-service-api-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/backend-protocol: 'HTTP'
 spec:
   rules:
     - host: appointment-service-api.local
@@ -72,4 +73,4 @@ spec:
               service:
                 name: appointment-service-api-service
                 port:
-                  number: 3002
+                  number: 80
