@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose the application port
-EXPOSE 3002
+EXPOSE 3003
 
 # Start the application in development mode with hot reload
 CMD ["npm", "run", "start:dev"]
